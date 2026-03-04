@@ -1,9 +1,7 @@
-import 'dart:convert';
-
 class Karyawan {
   final String nama;
   final int umur;
-  final String alamat;
+  final Alamat alamat;
   final List<String> hobi;
 
   Karyawan({
