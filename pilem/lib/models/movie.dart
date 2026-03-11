@@ -1,12 +1,11 @@
 class Movie {
-  final String id;
+  final int id;
   final String title;
   final String overview;
   final String posterPath;
   final String backdropPath;
   final String releaseDate;
-  final int voteAverage;
-
+  final double voteAverage;
   Movie({
     required this.id,
     required this.title,
@@ -16,7 +15,6 @@ class Movie {
     required this.releaseDate,
     required this.voteAverage,
   });
-
   factory Movie.fromJson(Map<String, dynamic> json) {
     return Movie(
       id: json['id'] ?? '',
