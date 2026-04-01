@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "637879501164",
+    "project_id": "my-first-project-5f6a9",
+    "storage_bucket": "my-first-project-5f6a9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:637879501164:android:9f47d0b7cfa2f394d13349",
+        "android_client_info": {
+          "package_name": "com.example.daftar_belanja"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsGI3ljb5XQ9iy1bAbk-k9WpttdDV88KU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:637879501164:android:d4a98c44ec122bb9d13349",
+        "android_client_info": {
+          "package_name": "com.example.pertemuan10"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsGI3ljb5XQ9iy1bAbk-k9WpttdDV88KU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
