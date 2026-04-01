@@ -26,4 +26,6 @@ class Movie {
       voteAverage: json['vote_average'].toDouble() ?? 0.0,
     );
   }
+
+  static fromJsonString(movieJson) {}
 }
