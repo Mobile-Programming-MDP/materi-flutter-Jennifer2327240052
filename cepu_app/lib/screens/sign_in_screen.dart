@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pertemuan10/screens/home_screen.dart';
 import 'package:pertemuan10/screens/sign_up_screen.dart';
-import 'package:pertemuan10/screens/home_screen.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -66,13 +65,6 @@ class SignInScreenState extends State<SignInScreen> {
                   }
                 },
                 child: const Text('Sign In'),
-              ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () {
-                  // Handle Google Sign In
-                },
-                child: Text('Sign In with Google'),
               ),
               const SizedBox(height: 32.0),
               TextButton(
