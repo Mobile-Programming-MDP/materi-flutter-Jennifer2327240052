@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:notes/models/node.dart';
+import 'package:notes/models/note.dart';
 
 class NoteService {
   static final FirebaseFirestore _database = FirebaseFirestore.instance;
@@ -13,8 +12,10 @@ class NoteService {
       'title': note.title,
       'description': note.description,
       'image_base_64': note.imageBase64,
-      'createdAt': FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
+      'created_at': FieldValue.serverTimestamp(),
+      'updated_at': FieldValue.serverTimestamp(),
+      'latitude': note.latitude,
+      'longitude': note.longitude,
     };
     await _notesCollection.add(newNote);
   }
@@ -24,8 +25,12 @@ class NoteService {
       'title': note.title,
       'description': note.description,
       'image_base_64': note.imageBase64,
-      'updatedAt': FieldValue.serverTimestamp(),
+      'created_at': note.createdAt,
+      'updated_at': FieldValue.serverTimestamp(),
+      'latitude': note.latitude,
+      'longitude': note.longitude,
     };
+
     await _notesCollection.doc(note.id).update(updatedNote);
   }
 
@@ -37,7 +42,7 @@ class NoteService {
     return _notesCollection.get();
   }
 
-  static Stream<List<Note>> streamNotes() {
+  static Stream<List<Note>> getNoteList() {
     return _notesCollection.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
@@ -46,12 +51,14 @@ class NoteService {
           title: data['title'],
           description: data['description'],
           imageBase64: data['image_base_64'],
-          createdAt: data['createdAt'] != null
-              ? data['createdAt'] as Timestamp
+          createdAt: data['created_at'] != null
+              ? data['created_at'] as Timestamp
               : null,
-          updatedAt: data['updatedAt'] != null
-              ? data['updatedAt'] as Timestamp
+          updatedAt: data['updated_at'] != null
+              ? data['updated_at'] as Timestamp
               : null,
+          latitude: data['latitude'],
+          longitude: data['longitude'],
         );
       }).toList();
     });
