@@ -1,4 +1,5 @@
-import 'dart:convert';
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:notes/models/note.dart';
 import 'package:notes/services/note_service.dart';
@@ -16,55 +17,101 @@ class _NoteListScreenState extends State<NoteListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Notes')),
-      body: StreamBuilder<List<Note>>(
-        stream: NoteService.getNoteList(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final notes = snapshot.data ?? [];
-          if (notes.isEmpty) {
-            return const Center(child: Text('No notes yet.'));
-          }
-          return ListView.builder(
-            itemCount: notes.length,
-            itemBuilder: (context, index) {
-              final note = notes[index];
-              return ListTile(
-                title: Text(note.title),
-                subtitle: Text(note.description),
-                leading: note.imageBase64 != null
-                    ? Image.memory(
-                        base64Decode(note.imageBase64!),
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover,
-                      )
-                    : const Icon(Icons.note),
-                onTap: () => _showNoteDialog(note: note),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () => NoteService.deleteNote(note),
-                ),
-              );
+      body: const NoteList(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return NoteDialog();
             },
           );
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showNoteDialog(),
+        tooltip: 'Add Note',
         child: const Icon(Icons.add),
       ),
     );
   }
+}
 
-  void _showNoteDialog({Note? note}) {
+class NoteList extends StatelessWidget {
+  const NoteList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: NoteService.getNoteList(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return const Center(child: CircularProgressIndicator());
+          default:
+            return ListView(
+              padding: const EdgeInsets.only(bottom: 80),
+              children: snapshot.data!.map((document) {
+                return Card(
+                  child: ListTile(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return NoteDialog(note: document);
+                        },
+                      );
+                    },
+                    title: Text(document.title),
+                    subtitle: Text(document.description),
+                    trailing: InkWell(
+                      onTap: () {
+                        showAlertDialog(context, document);
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: Icon(Icons.delete),
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            );
+        }
+      },
+    );
+  }
+
+  void showAlertDialog(BuildContext context, Note document) {
+    // set up the buttons
+    Widget cancelButton = ElevatedButton(
+      child: const Text("No"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+    Widget continueButton = ElevatedButton(
+      child: const Text("Yes"),
+      onPressed: () {
+        NoteService.deleteNote(document).whenComplete(() {
+          Navigator.of(context).pop();
+        });
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: const Text("Delete Note"),
+      content: const Text("Are you sure to delete Note?"),
+      actions: [cancelButton, continueButton],
+    );
+
+    // show the dialog
     showDialog(
       context: context,
-      builder: (context) => NoteDialog(note: note),
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 }

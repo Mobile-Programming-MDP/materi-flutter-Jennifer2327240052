@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import, avoid_print, use_build_context_synchronously, unnecessary_brace_in_string_interps
+
 import 'dart:convert';
 import 'dart:io';
 

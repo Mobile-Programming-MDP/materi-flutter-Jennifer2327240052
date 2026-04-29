@@ -12,10 +12,10 @@ class NoteService {
       'title': note.title,
       'description': note.description,
       'image_base_64': note.imageBase64,
-      'created_at': FieldValue.serverTimestamp(),
-      'updated_at': FieldValue.serverTimestamp(),
       'latitude': note.latitude,
       'longitude': note.longitude,
+      'created_at': FieldValue.serverTimestamp(),
+      'updated_at': FieldValue.serverTimestamp(),
     };
     await _notesCollection.add(newNote);
   }
@@ -25,10 +25,10 @@ class NoteService {
       'title': note.title,
       'description': note.description,
       'image_base_64': note.imageBase64,
-      'created_at': note.createdAt,
-      'updated_at': FieldValue.serverTimestamp(),
       'latitude': note.latitude,
       'longitude': note.longitude,
+      'created_at': note.createdAt,
+      'updated_at': FieldValue.serverTimestamp(),
     };
 
     await _notesCollection.doc(note.id).update(updatedNote);

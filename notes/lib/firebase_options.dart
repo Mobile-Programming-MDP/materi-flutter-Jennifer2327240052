@@ -50,24 +50,21 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyABVMqCkAoryjaYWpQjhrzyf6UF_tqPtrk',
-    appId: '1:1076757814194:web:3964b4077df2bb83a222ab',
-    messagingSenderId: '1076757814194',
-    projectId: 'khalbhi-dev',
-    authDomain: 'khalbhi-dev.firebaseapp.com',
-    databaseURL:
-        'https://khalbhi-dev-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'khalbhi-dev.firebasestorage.app',
-    measurementId: 'G-W8Y1M17NP6',
+    apiKey: 'AIzaSyCUpo-9lbTdIKDd76TTfWwS8CRUWOuJAA0',
+    appId: '1:659283496028:web:8777897ccf8fcf9bb1ea99',
+    messagingSenderId: '659283496028',
+    projectId: 'notes-78f4c',
+    authDomain: 'notes-78f4c.firebaseapp.com',
+    storageBucket: 'notes-78f4c.firebasestorage.app',
+    measurementId: 'G-M4G1WF19BR',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyALbdcTXO-4e8N4-O22YVDypBGFyNycbO4',
-    appId: '1:1076757814194:android:3851237c35bab12fa222ab',
-    messagingSenderId: '1076757814194',
-    projectId: 'khalbhi-dev',
-    databaseURL:
-        'https://khalbhi-dev-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'khalbhi-dev.firebasestorage.app',
+    apiKey: 'AIzaSyCyzWao6peGqHCi8g0eADepN8yvU3dEJsU',
+    appId: '1:659283496028:android:3a302ee4c108ab4db1ea99',
+    messagingSenderId: '659283496028',
+    projectId: 'notes-78f4c',
+    storageBucket: 'notes-78f4c.firebasestorage.app',
   );
+
 }
