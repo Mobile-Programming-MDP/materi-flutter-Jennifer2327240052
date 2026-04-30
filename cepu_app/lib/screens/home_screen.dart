@@ -1,8 +1,9 @@
-import 'package:pertemuan10/screens/sign_in_screen.dart';
-import 'package:pertemuan10/screens/sign_up_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pertemuan10/screens/add_post_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:pertemuan10/screens/sign_in_screen.dart';
+import 'package:pertemuan10/services/post-service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,8 +13,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  Future<void> signOut(BuildContext context) async {
+  get currentUserId => null;
+
+  Future<void> signOut() async {
     await FirebaseAuth.instance.signOut();
+    if (!mounted) return;
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => SignInScreen()),
@@ -21,44 +25,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future<String?> getTokenAuth() async {
-    User? user = FirebaseAuth.instance.currentUser;
-
-    if (user != null) {
-      String? idToken = await user.getIdToken(true);
-      return idToken;
-    }
-
-    return null;
-  }
-
-  String? _idToken = "";
-  String? _uid = "";
-  String? _email = "";
-
-  get color => null;
-
-  Future<void> getFirebaseAuthUser() async {
-    User? user = FirebaseAuth.instance.currentUser;
-
-    if (user != null) {
-      _uid = user.uid;
-      _email = user.email;
-      await user
-          .getIdToken(true)
-          .then(
-            (value) => {
-              setState(() {
-                _idToken = value;
-              }),
-            },
-          );
-    }
-  }
-
-  String generatAvatarUrl(String? fullname) {
-    final formattedName = fullname?.trim().replaceAll(' ', '+');
-    return 'https://ui-avatars.com/api/?name-$formattedName$color=FFFFFF&background=000000';
+  //Fungsi untuk membuat url foto profile / avatar
+  String generateAvatarUrl(String? fullName) {
+    final formattedName = fullName!.trim().replaceAll(' ', '+');
+    return 'https://ui-avatars.com/api/?name=$formattedName&color=FFFFFF&background=000000';
   }
 
   @override
@@ -66,14 +36,21 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Home Screen"),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.logout))],
+        actions: [
+          IconButton(
+            onPressed: () {
+              signOut();
+            },
+            icon: Icon(Icons.logout),
+            tooltip: "Sign Out",
+          ),
+        ],
       ),
       body: Column(
         children: [
           Image.network(
-            generatAvatarUrl(
-              FirebaseAuth.instance.currentUser!.displayName.toString(),
+            generateAvatarUrl(
+              FirebaseAuth.instance.currentUser?.displayName.toString(),
             ),
             width: 100,
             height: 100,
@@ -84,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 16.0),
-          Text("You have been signed in with Token id: $_idToken"),
+          const Center(child: Text("You Have Been Signed In!")),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -92,9 +69,38 @@ class _HomeScreenState extends State<HomeScreen> {
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const AddPostScreen()),
           );
+          stream:
+          PostService().getPostsStream();
+          builder:
+          (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text("Error: ${snapshot.error}"));
+            }
+            final posts = snapshot.data ?? [];
+            if (posts.isEmpty) {
+              return const Center(child: Text("No posts available"));
+            }
+            return RefreshIndicator(
+              onRefresh: () async {},
+              child: ListView.builder(
+                itemCount: posts.length,
+                itemBuilder: (context, index) {
+                  final post = posts[index];
+                  final isOwner =
+                      currentUserId != null && post.userId == currentUserId;
+                  return PostListItem(post: post, isOwner: isOwner);
+                },
+              ),
+            );
+          };
         },
         child: const Icon(Icons.add),
       ),
     );
   }
+
+  PostListItem({required post, required bool isOwner}) {}
 }

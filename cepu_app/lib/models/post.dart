@@ -10,7 +10,7 @@ class Post {
   String? latitude;
   String? longitude;
   String? userId;
-  String? userfullName;
+  String? userFullName;
 
   Post({
     this.id,
@@ -22,7 +22,7 @@ class Post {
     this.latitude,
     this.longitude,
     this.userId,
-    this.userfullName,
+    this.userFullName,
   });
 
   factory Post.fromMap(Map<String, dynamic> map) {
@@ -36,7 +36,7 @@ class Post {
       latitude: map['latitude'],
       longitude: map['longitude'],
       userId: map['userId'],
-      userfullName: map['userfullName'],
+      userFullName: map['userfullName'],
     );
   }
 
@@ -51,7 +51,7 @@ class Post {
       'latitude': latitude,
       'longitude': longitude,
       'userId': userId,
-      'userfullName': userfullName,
+      'userFullName': userFullName,
     };
   }
 }
