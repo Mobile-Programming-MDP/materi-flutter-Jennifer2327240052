@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pertemuan10/models/post.dart';
 import 'package:pertemuan10/screens/add_post_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return 'https://ui-avatars.com/api/?name=$formattedName&color=FFFFFF&background=000000';
   }
 
-  //1 Create variable untuk menyimpan ketegori
+  //1. Create variable untuk menyimpan kategori
   String? selectedCategory;
   List<String> get categories {
     return [
@@ -41,16 +42,16 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
   }
 
-  //2 Create function untuk meampilkan model button sheet untuk memilih kategori
+  //2. Create function untuk menampilkan modal bottom sheet
+  //untuk memilih kategori
   void _showCategoryFilter() async {
-    // ignore: unused_local_variable
     final result = await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (context0) {
+      builder: (context) {
         return SafeArea(
           child: SizedBox(
             height: MediaQuery.of(context).size.height * 0.75,
@@ -59,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 ListTile(
                   leading: const Icon(Icons.clear),
-                  title: Text("All category"),
+                  title: Text("All Category"),
                   onTap: () => Navigator.pop(
                     context,
                     null,
@@ -75,7 +76,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: Theme.of(context).colorScheme.primary,
                           )
                         : null,
-                    onTap: () => Navigator.pop(context, category),
+                    onTap: () => Navigator.pop(
+                      context,
+                      category,
+                    ), // Kategori yang dipilih
                   ),
                 ),
               ],
@@ -84,6 +88,18 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+
+    if (result != null) {
+      setState(() {
+        selectedCategory = result;
+        // Set kategori yang dipilih atau null untuk Semua Kategori
+      });
+    } else {
+      setState(() {
+        selectedCategory = null;
+        // Reset ke null untuk menampilkan semua kategori
+      });
+    }
   }
 
   @override
@@ -93,11 +109,18 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text("Home Screen"),
         actions: [
-          //3 tambahkan IconBottom untuk memunculkan filter kategori
+          //3. Tambahkan IconButton untuk memunculkan filter kategori
           IconButton(
             onPressed: _showCategoryFilter,
             icon: const Icon(Icons.filter_list),
             tooltip: "Filter",
+          ),
+          IconButton(
+            onPressed: () {
+              signOut();
+            },
+            icon: Icon(Icons.logout),
+            tooltip: "Sign Out",
           ),
         ],
       ),
@@ -120,9 +143,9 @@ class _HomeScreenState extends State<HomeScreen> {
           const Divider(),
           Expanded(
             child: StreamBuilder(
-              //4. Ganti stream dgn memanggil fungsi
+              //4. Ganti stream dengan memanggil fungsi
               //getPostListByCategory dengan parameter selectedCategory
-              stream: PostService.getPostListByCategory(selectedCategory),
+              stream: PostService.getPostListByCategory(selectedCategory!),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -163,4 +186,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  PostListItem({required Post post, required bool isOwner}) {}
 }

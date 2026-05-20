@@ -223,6 +223,57 @@ class _AddPostScreenState extends State<AddPostScreen> {
     }
   }
 
+  // 7 fungdi gemerate desciription otomatis berdasarkan gambar
+  // panggil fungsi ini setelah gambar dipilih
+
+  Future<void> _generateDescriptionWithAI() async {
+    if (_base64Image == null) return;
+    setState(() => _isGenerating = true);
+    try {
+      const apiKey = 'AIzaSyARTOD2QTxqJg-DSQ9VH-XyhK2dvrwH4j4';
+      const apiUrl ="https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:streamGenerateContent?key=$apiKey";
+      final body = jsonEncode({
+        "contents" : [
+          {
+            "parts" : [
+              {
+                "inlineData": {
+                  "mimeType": "image/jpeg",
+                  "data": _base64Image,
+                },
+              },
+              {
+                "text" :
+                "Berdasarkan foto ini, indentifikasi satu kategori utama kerusakan fasilitas umum"
+                "dari daftar berikut: Jalan Rusak, Lampu jalan Mati, Lawan Arah, Merokok di jalan, Tidak Memakai Helm. dan lainnya."
+                "Pilih kategori yang paling dominan atau paling mendesak untuk dilaporkan."
+                "Buat deskripsi singkat untuk laporan perbaikan, dan tambahkan permohonan perbaikan."
+                "Fokus pada kerudakan yang terlihat dan hindari spekulasi. \n\n"
+                "Format output yang diinginkan:\n"
+                "Kategori: [kategori yang dipilih]\n"
+                "Deskripsi: [deskripsi singkat]",
+              }
+            ]
+          }
+        ]
+      });
+      }
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: body,
+      );
+      if (response.statusCode == 200) {
+      }else {
+        debugPrint('Failed to generate Ai description: $e');
+      }
+    } catch (e) {
+      debugPrint('Error generating AI description: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _isGenerating = false);
+      }
+    }
   @override
   void dispose() {
     _descriptionController.dispose();
@@ -240,10 +291,21 @@ class _AddPostScreenState extends State<AddPostScreen> {
           children: [
             _buildImagePreview(),
             const SizedBox(height: 12),
-            OutlinedButton(
-              onPressed: _isSubmitting ? null : pickImageAndConvert,
-              child: const Text('Pick Image'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.stretch,
+              children: [
+                OutlinedButton(
+                onPressed: _isGenerating ? null : pickImageAndConvert,
+                child: Text(_isGenerating ? 'Generating...' : 'Pick Image'),
+              ),
+              ],
             ),
+            const SizedBox(height: 16),
+             if (!_isGenerating && _base64Image != null)
+              ElevatedButton(
+                onPressed: _isGenerating ? null : _generateDescriptionWithAI,
+                child: const Text('Generate Description with AI'),
+              ),
             const SizedBox(height: 16),
             OutlinedButton(
               onPressed: _isSubmitting ? null : _showCategorySelect,
@@ -286,4 +348,5 @@ class _AddPostScreenState extends State<AddPostScreen> {
       ),
     );
   }
+}
 }

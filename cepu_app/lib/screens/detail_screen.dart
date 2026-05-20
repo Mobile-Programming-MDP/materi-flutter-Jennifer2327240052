@@ -119,8 +119,20 @@ class DetailScreen extends StatelessWidget {
                       ],
                     ),
                   ],
+                  const SizedBox(height: 12),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => MapDetailScreen(post: post),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.map),
+                    label: const Text('View on Map'),
+                  ),
                 ],
-                
               ),
             ),
           ],
@@ -129,32 +141,3 @@ class DetailScreen extends StatelessWidget {
     );
   }
 }
-final point = hasLocation ? LatLng(lat, lng) : null;
-    return Scaffold(
-      appBar: AppBar(title: Text(post.category ?? 'map detail')),
-      body: hasLocation
-          ? FlutterMap(
-              options: MapOptions(
-                initialCenter: point,
-                initialZoom: 15.0),
-              children: [
-                TileLayer(
-                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  userAgentPackageName: 'com.example.app',
-                ),
-                MarkerLayer(
-                  markers: [
-                    Marker(
-                      point: point,
-                      width: 48,
-                      height: 48,
-                      child: const Icon(
-                        Icons.location_pin,
-                        color: Colors.red,
-                        size: 48,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-              ])
