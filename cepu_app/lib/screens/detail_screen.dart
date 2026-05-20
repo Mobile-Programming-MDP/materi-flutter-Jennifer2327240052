@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:pertemuan10/models/post.dart';
-import 'package:pertemuan10/screens/map_detail_screen.dart';
+import 'package:pertemuan10/screens/map_detail_screen.dart' hide Post;
 import 'package:pertemuan10/services/post-service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -125,7 +125,7 @@ class DetailScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => MapDetailScreen(post: post),
+                          builder: (_) => MapDetailScreen(post: post as dynamic),
                         ),
                       );
                     },
